@@ -69,7 +69,7 @@ pipeline {
 					exit /b 0
 				"""
 			}
-		}}
+		}
 
 
     }
