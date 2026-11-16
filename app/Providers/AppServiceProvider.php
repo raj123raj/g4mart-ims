@@ -3,6 +3,12 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use App\Models\Product;
+use App\Observers\ProductObserver;
+use App\Listeners\LogAuthenticationEvent;
+use Illuminate\Auth\Events\Login;
+use Illuminate\Auth\Events\Logout;
+use Illuminate\Support\Facades\Event;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,6 +25,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Product::observe(ProductObserver::class);
+        Event::listen(Login::class, [LogAuthenticationEvent::class, 'handle']);
+        Event::listen(Logout::class, [LogAuthenticationEvent::class, 'handle']);
         //
     }
 }
