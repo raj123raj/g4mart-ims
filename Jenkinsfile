@@ -54,19 +54,22 @@ pipeline {
             }
         }
 
-        stage('Deploy Local') {
-            steps {
-                bat """
-                    if exist exclude.txt (
-                        xcopy /E /I /Y /H . "%LOCAL_DEPLOYPATH%" /exclude:exclude.txt
-                    ) else (
-                        xcopy /E /I /Y /H . "%LOCAL_DEPLOYPATH%"
-                    )
-                """
+		stage('Deploy Local') {
+			steps {
+				bat """
+					if not exist "%LOCAL_DEPLOYPATH%" mkdir "%LOCAL_DEPLOYPATH%"
 
+					robocopy "%WORKSPACE%" "%LOCAL_DEPLOYPATH%" /E /R:2 /W:5 ^
+						/XD .git node_modules ^
+						/XF .env .env.example Jenkinsfile exclude.txt ^
+						/NFL /NDL
 
-            }
-        }
+					set "RC=%ERRORLEVEL%"
+					if %RC% GEQ 8 exit /b %RC%
+					exit /b 0
+				"""
+			}
+		}}
 
 
     }
