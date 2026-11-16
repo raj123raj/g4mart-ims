@@ -5,6 +5,7 @@ pipeline {
         PHP_PATH       = 'D:\\Priya\\softwares\\php\\php.exe'
         COMPOSER_PATH  = 'D:\\Priya\\softwares\\composer\\composer.bat'
         LOCAL_DEPLOYPATH = 'D:\\Xampp1\\htdocs\\g4mart-ims'
+		MYSQL_PATH = 'C:\\Program Files\\MySQL\\MySQL Server 5.7\\bin\\mysql.exe'
     }
 
     stages {
@@ -38,13 +39,14 @@ pipeline {
 
 
         stage('Test DB') {
-            steps {
-                bat """
-                if exist database\\database.sqlite del database\\database.sqlite
-                "%PHP_PATH%" artisan migrate:fresh --seed
-                """
-            }
-        }
+    steps {
+        bat """
+            "%MYSQL_PATH%" -h 127.0.0.1 -u root -e "CREATE DATABASE IF NOT EXISTS g4mart_ims;"
+            "%PHP_PATH%" artisan config:clear
+            "%PHP_PATH%" artisan migrate:fresh --seed --env=testing
+        """
+    }
+}
 
         stage('Test') {
             steps {
