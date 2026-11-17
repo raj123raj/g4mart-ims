@@ -67,15 +67,7 @@ pipeline {
             }
         }
 
-        // 6. Build frontend assets using Vite
-        stage('Build Frontend') {
-            steps {
-                bat """
-                    npm ci
-                    npm run build
-                """
-            }
-        }
+
 
         // 7. Deploy application to local XAMPP folder
         stage('Deploy Local') {
